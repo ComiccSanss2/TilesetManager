@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Dropzone from "./components/Dropzone";
 import TileOptions from "./components/TileOptions";
 import TileGrid from "./components/TileGrid";
+import TileInfoPanel from "./components/TileInfoPanel";
+import ZoomControls from "./components/ZoomControls";
 import "./styles.css";
 
 export default function App() {
@@ -9,6 +11,10 @@ export default function App() {
   const [tiles, setTiles] = useState([]);
   const [tileSize, setTileSize] = useState(16);
   const [customSize, setCustomSize] = useState(16);
+
+  const [zoom, setZoom] = useState(1);
+  const [showGrid, setShowGrid] = useState(true);
+  const [hoveredTile, setHoveredTile] = useState(null);
 
   const handleSlice = () => {
     if (!image) return;
@@ -58,26 +64,52 @@ export default function App() {
       }
 
       setTiles(slicedTiles);
+      setHoveredTile(null);
     };
   };
 
+  const effectiveTileSize = tileSize === "custom" ? customSize : tileSize;
+
   return (
     <div className="app">
-      <h1 className="title">🎨 Tileset Manager</h1>
+      <header className="app-header">
+        <h1 className="title">🎨 Tileset Manager</h1>
+        <p className="subtitle">Import, slice and inspect your tilesets.</p>
+      </header>
 
       <Dropzone setImage={setImage} />
 
       {image && (
-        <TileOptions
-          tileSize={tileSize}
-          setTileSize={setTileSize}
-          customSize={customSize}
-          setCustomSize={setCustomSize}
-          handleSlice={handleSlice}
-        />
+        <>
+          <TileOptions
+            tileSize={tileSize}
+            setTileSize={setTileSize}
+            customSize={customSize}
+            setCustomSize={setCustomSize}
+            handleSlice={handleSlice}
+          />
+
+          <ZoomControls
+            zoom={zoom}
+            setZoom={setZoom}
+            showGrid={showGrid}
+            setShowGrid={setShowGrid}
+          />
+        </>
       )}
 
-      {tiles.length > 0 && <TileGrid tiles={tiles} />}
+      {tiles.length > 0 && (
+        <div className="workspace">
+          <TileGrid
+            tiles={tiles}
+            zoom={zoom}
+            showGrid={showGrid}
+            onTileHover={setHoveredTile}
+            tileSize={effectiveTileSize}
+          />
+          <TileInfoPanel tile={hoveredTile} tileSize={effectiveTileSize} />
+        </div>
+      )}
     </div>
   );
 }
