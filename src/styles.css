@@ -1,36 +1,59 @@
 body {
-  background: #0f172a;
-  color: #fff;
-  font-family: sans-serif;
-  margin: 0;
-  padding: 2rem;
+  background: #1b1b1b;
+  font-family: "Press Start 2P", monospace;
+  color: #e5e5e5;
+  padding: 20px;
 }
 
-.app-container {
-  max-width: 700px;
-  margin: auto;
-  text-align: center;
+/* PANEL STYLE */
+.pixel-panel {
+  border: 3px solid #5cff95;
+  background: #111;
+  padding: 15px;
+  margin: 20px 0;
+  box-shadow: 0 0 10px #5cff9555;
 }
 
-.drop-zone {
-  margin-top: 2rem;
-  padding: 3rem;
-  border: 2px dashed #4f46e5;
-  border-radius: 10px;
+.pixel-button {
+  border: 3px solid #5cff95;
+  padding: 10px;
+  background: #111;
   cursor: pointer;
+  color: #5cff95;
+  font-family: inherit;
 }
 
-.drop-zone:hover {
-  background-color: rgba(79, 70, 229, 0.1);
+.pixel-button:hover {
+  background: #5cff95;
+  color: #111;
 }
 
-.drop-zone input {
-  margin-top: 1rem;
+/* GRID */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 70px);
+  gap: 10px;
+  margin-top: 20px;
 }
 
-.preview img {
-  margin-top: 2rem;
-  max-width: 100%;
-  border-radius: 10px;
-  border: 1px solid #475569;
+.tile-preview {
+  text-align: center;
+  padding: 5px;
+}
+
+.tile-preview img {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+}
+
+.coords {
+  font-size: 8px;
+  opacity: 0.7;
+}
+
+/* DROPZONE */
+.dropzone {
+  cursor: pointer;
+  text-align: center;
 }
