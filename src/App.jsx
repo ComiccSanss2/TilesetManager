@@ -16,6 +16,9 @@ export default function App() {
   const [showGrid, setShowGrid] = useState(true);
   const [hoveredTile, setHoveredTile] = useState(null);
 
+  /* ================================
+      🔪 HANDLE TILE SLICING
+  ================================== */
   const handleSlice = () => {
     if (!image) return;
 
@@ -70,6 +73,65 @@ export default function App() {
 
   const effectiveTileSize = tileSize === "custom" ? customSize : tileSize;
 
+  /* ================================
+      📤 EXPORT: JSON
+  ================================== */
+  const handleExportJSON = () => {
+    if (tiles.length === 0) return;
+
+    const json = tiles.map((tile, index) => ({
+      id: index,
+      x: tile.x,
+      y: tile.y,
+      size: tile.size,
+      src: tile.src, // dataURL (optionnel)
+    }));
+
+    const blob = new Blob([JSON.stringify(json, null, 2)], {
+      type: "application/json",
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "tileset-data.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  /* ================================
+      📤 EXPORT: PNG
+  ================================== */
+  const handleExportPNG = () => {
+    if (!image) return;
+
+    const img = new Image();
+    img.src = image;
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "tileset.png";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    };
+  };
+
+  /* ================================
+      🖥️ RENDER
+  ================================== */
   return (
     <div className="app">
       <header className="app-header">
@@ -79,24 +141,36 @@ export default function App() {
 
       <Dropzone setImage={setImage} />
 
-   {image && (
-  <div className="panels-row">
-    <TileOptions
-      tileSize={tileSize}
-      setTileSize={setTileSize}
-      customSize={customSize}
-      setCustomSize={setCustomSize}
-      handleSlice={handleSlice}
-    />
+      {image && (
+        <div className="panels-row">
+          <TileOptions
+            tileSize={tileSize}
+            setTileSize={setTileSize}
+            customSize={customSize}
+            setCustomSize={setCustomSize}
+            handleSlice={handleSlice}
+          />
 
-    <ZoomControls
-      zoom={zoom}
-      setZoom={setZoom}
-      showGrid={showGrid}
-      setShowGrid={setShowGrid}
-    />
-  </div>
-)}
+          <ZoomControls
+            zoom={zoom}
+            setZoom={setZoom}
+            showGrid={showGrid}
+            setShowGrid={setShowGrid}
+          />
+        </div>
+      )}
+
+      {/* 🔧 Export buttons */}
+      {tiles.length > 0 && (
+        <div className="export-row">
+          <button className="btn-export" onClick={handleExportJSON}>
+            Export JSON
+          </button>
+          <button className="btn-export" onClick={handleExportPNG}>
+            Export PNG
+          </button>
+        </div>
+      )}
 
       {tiles.length > 0 && (
         <div className="workspace">
