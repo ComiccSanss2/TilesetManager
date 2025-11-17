@@ -1,8 +1,8 @@
-#  Tileset Manager
+#  PIXENO — Tileset Manager
 
-### _Import, preview and prepare tilesets for Unity and 2D games._
+### _A fast, modern and retro-styled tileset preparation tool for game developers._
 
-<p align="center"> <img src="https://img.shields.io/badge/React-18-61dafb?style=for-the-badge&logo=react&logoColor=black" /> <img src="https://img.shields.io/badge/Vite-Build-646cff?style=for-the-badge&logo=vite&logoColor=yellow" /> <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge" /> </p>
+<p align="center"> <img src="https://img.shields.io/badge/React-18-61dafb?style=for-the-badge&logo=react&logoColor=black" /> <img src="https://img.shields.io/badge/Vite-Build-646cff?style=for-the-badge&logo=vite&logoColor=yellow" /> <img src="https://img.shields.io/badge/Status-Stable-green?style=for-the-badge" /> <img src="https://img.shields.io/badge/Hosted-GitHub%20Pages-blue?style=for-the-badge&logo=github" /> </p> <p align="center"> 🔗 **Live version:** https://comiccsanss2.github.io/tileset-manager </p>
 
 ---
 
