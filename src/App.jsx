@@ -6,7 +6,7 @@ import TileInfoPanel from "./components/TileInfoPanel";
 import ZoomControls from "./components/ZoomControls";
 import JSZip from "jszip";
 import "./styles.css";
-import logo from "./public/logo.png";
+import logo from "./assets/logo.png";
 
 export default function App() {
   const [image, setImage] = useState(null);
