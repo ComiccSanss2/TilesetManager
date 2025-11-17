@@ -195,6 +195,17 @@ export default function App() {
       <header className="app-header">
         <h1 className="title">Tileset Manager</h1>
         <p className="subtitle">Import, slice and inspect your tilesets.</p>
+  <div className="gba-toggle-wrapper">
+    <div
+      className="gba-toggle"
+      onClick={() => {
+        const isLight = document.body.classList.toggle("theme-light");
+        localStorage.setItem("gba-theme", isLight ? "light" : "dark");
+      }}
+    >
+      <div className="gba-toggle-slider"></div>
+    </div>
+  </div>
       </header>
 
       <Dropzone setImage={setImage} />

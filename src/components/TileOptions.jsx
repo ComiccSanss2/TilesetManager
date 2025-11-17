@@ -10,7 +10,7 @@ export default function TileOptions({
 }) {
   return (
     <div className="options-panel pixel-panel">
-      <h2>⚙️ Tile Settings</h2>
+<h2 className="gba-title">Tile Settings</h2>
 
       <div className="options-row">
         <label>Tile size:</label>
@@ -38,7 +38,7 @@ export default function TileOptions({
       )}
 
       <button className="btn-slice pixel-button" onClick={handleSlice}>
-        ✂️ Slice Tileset
+         Slice Tileset
       </button>
     </div>
   );

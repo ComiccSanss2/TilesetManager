@@ -7,7 +7,7 @@ export default function ZoomControls({ zoom, setZoom, showGrid, setShowGrid }) {
 
   return (
     <div className="options-panel pixel-panel zoom-panel">
-      <h2>🔍 View</h2>
+<h2 className="gba-title">View</h2>
 
       <div className="options-row">
         <label>Zoom</label>
