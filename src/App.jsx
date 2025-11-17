@@ -12,14 +12,13 @@ export default function App() {
   const [tiles, setTiles] = useState([]);
   const [tileSize, setTileSize] = useState(16);
   const [customSize, setCustomSize] = useState(16);
+  const [showSplash, setShowSplash] = useState(true);
 
   const [zoom, setZoom] = useState(1);
   const [showGrid, setShowGrid] = useState(true);
   const [hoveredTile, setHoveredTile] = useState(null);
   const [selectedTile, setSelectedTile] = useState(null);
 
-
-  // 🎯 Collision par tile : { [tile.id]: "solid" | "none" | ... }
   const [collisions, setCollisions] = useState({});
 
   // Charger le thème à partir du localStorage
@@ -81,7 +80,6 @@ export default function App() {
             src: tileURL,
           });
 
-          // Par défaut : pas de collision
           newCollisions[id] = "none";
         }
       }
@@ -92,8 +90,7 @@ export default function App() {
     };
   };
 
-  const effectiveTileSize =
-    tileSize === "custom" ? customSize : tileSize;
+  const effectiveTileSize = tileSize === "custom" ? customSize : tileSize;
 
   /* ================================
        EXPORT JSON
@@ -153,14 +150,13 @@ export default function App() {
   };
 
   /* ================================
-      EXPORT MANIFEST (UNITY + GODOT)
+       EXPORT MANIFEST (UNITY + GODOT)
   ================================== */
   const handleExportManifest = () => {
     if (!tiles.length) return;
 
     const size = effectiveTileSize;
 
-    // UNITY SPRITE ATLAS JSON
     const unityAtlas = {
       name: "TilesetAtlas",
       tileSize: size,
@@ -176,7 +172,6 @@ export default function App() {
       })),
     };
 
-    // GODOT TRES (AtlasTexture) – simple manifest
     const godotTres =
 `[resource]
 resource_name = "TilesetAtlas"
@@ -213,7 +208,6 @@ ${tiles
 
     const zip = new JSZip();
 
-    // full tileset
     const img = new Image();
     img.src = image;
     await new Promise((resolve) => (img.onload = resolve));
@@ -231,7 +225,6 @@ ${tiles
 
     zip.file("tileset.png", tilesetBlob);
 
-    // JSON metadata
     const json = tiles.map((tile) => ({
       id: tile.index,
       x: tile.x,
@@ -242,7 +235,6 @@ ${tiles
 
     zip.file("tileset-data.json", JSON.stringify(json, null, 2));
 
-    // individual tiles
     const folder = zip.folder("tiles");
 
     for (const tile of tiles) {
@@ -271,32 +263,68 @@ ${tiles
     }));
   };
 
+  /* ================================
+       SPLASH SCREEN
+  ================================== */
+if (showSplash) {
+    return (
+      <div className="splash-screen">
+
+        {/* LOGO */}
+        <img
+          src="/assets/logo.png"
+          alt="Tileset Manager Logo"
+          className="splash-logo"
+        />
+
+        <h1 className="splash-title">PIXENO</h1>
+        <p className="splash-subtitle">A Tileset Manager</p>
+
+        <div className="splash-info">
+          <p>• Slice Tiles</p>
+          <p>• Export PNG / JSON / ZIP / MANIFEST</p>
+          <p>• Add Collisions</p>
+          <p>• Unity / Godot Compatible</p>
+        </div>
+
+        <button className="splash-btn" onClick={() => setShowSplash(false)}>
+          ENTER EDITOR
+        </button>
+
+        <div className="crt-effect"></div>
+      </div>
+    );
+}
 
 
   /* ================================
-       UI RENDER
+       MAIN UI
   ================================== */
   return (
     <div className="app">
-      <header className="app-header">
-        <h1 className="title">Tileset Manager</h1>
-        <p className="subtitle">
-          Import, slice, inspect and tag tiles with collision data.
-        </p>
+<header className="app-header">
+  <div className="app-logo-title">
+      <img src="/assets/logo.png" alt="logo" className="header-logo" />
+      <h1 className="title">Tileset Manager</h1>
+  </div>
 
-        <div className="gba-toggle-wrapper">
-          <div
-            className="gba-toggle"
-            onClick={() => {
-              const isLight =
-                document.body.classList.toggle("theme-light");
-              localStorage.setItem("gba-theme", isLight ? "light" : "dark");
-            }}
-          >
-            <div className="gba-toggle-slider"></div>
-          </div>
-        </div>
-      </header>
+  <p className="subtitle">
+    Import, slice, inspect and tag tiles with collision data.
+  </p>
+
+  <div className="gba-toggle-wrapper">
+    <div
+      className="gba-toggle"
+      onClick={() => {
+        const isLight = document.body.classList.toggle("theme-light");
+        localStorage.setItem("gba-theme", isLight ? "light" : "dark");
+      }}
+    >
+      <div className="gba-toggle-slider"></div>
+    </div>
+  </div>
+</header>
+
 
       <Dropzone setImage={setImage} />
 
@@ -347,6 +375,7 @@ ${tiles
             tileSize={effectiveTileSize}
             collisions={collisions}
           />
+
           <TileInfoPanel
             tile={selectedTile || hoveredTile}
             tileSize={effectiveTileSize}
