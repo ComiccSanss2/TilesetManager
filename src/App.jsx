@@ -6,6 +6,7 @@ import TileInfoPanel from "./components/TileInfoPanel";
 import ZoomControls from "./components/ZoomControls";
 import JSZip from "jszip";
 import "./styles.css";
+import logo from "./assets/logo.png";
 
 export default function App() {
   const [image, setImage] = useState(null);
@@ -45,7 +46,7 @@ export default function App() {
   };
 
   /* ======================================================
-     IMAGE UPLOAD + SAFE CLEANUP
+     IMAGE UPLOAD
   ====================================================== */
   const handleImageLoad = (fileUrl) => {
     const img = new Image();
@@ -54,14 +55,14 @@ export default function App() {
     img.onload = () => {
       setImage(fileUrl);
       setImageObj(img);
-      img.onload = null; // CLEANUP
-      img.onerror = null; // CLEANUP
+      img.onload = null;
+      img.onerror = null;
     };
 
     img.onerror = () => {
       throwError("Invalid or corrupted image file.");
-      img.onload = null; // CLEANUP
-      img.onerror = null; // CLEANUP
+      img.onload = null;
+      img.onerror = null;
     };
   };
 
@@ -76,17 +77,13 @@ export default function App() {
 
     const size = tileSize === "custom" ? customSize : tileSize;
 
-    // SAFETY CHECK — Image too large
     if (imageObj.width > 8192 || imageObj.height > 8192) {
       throwError("Image is too large. Max allowed size is 8192x8192.");
       return;
     }
 
-    // SAFETY CHECK — Not divisible
     if (imageObj.width % size !== 0 || imageObj.height % size !== 0) {
-      throwError(
-        `Image size is not divisible by ${size}px. Choose a matching tile size.`
-      );
+      throwError(`Image size is not divisible by ${size}px.`);
       return;
     }
 
@@ -141,7 +138,7 @@ export default function App() {
         setHoveredTile(null);
         setCollisions(newCollisions);
 
-        canvas.remove(); // CLEANUP
+        canvas.remove();
       } catch (e) {
         throwError("Failed to slice the image.");
       }
@@ -150,8 +147,11 @@ export default function App() {
     }, 200);
   };
 
-  const effectiveTileSize =
-    tileSize === "custom" ? customSize : tileSize;
+  const effectiveTileSize = tileSize === "custom" ? customSize : tileSize;
+
+  const handleCollisionChange = (tileId, type) => {
+  setCollisions((prev) => ({ ...prev, [tileId]: type }));
+};
 
   /* ======================================================
      EXPORT JSON
@@ -179,7 +179,7 @@ export default function App() {
     a.download = "tileset-data.json";
     a.click();
 
-    URL.revokeObjectURL(url); // CLEANUP
+    URL.revokeObjectURL(url);
   };
 
   /* ======================================================
@@ -203,13 +203,13 @@ export default function App() {
       a.download = "tileset.png";
       a.click();
 
-      URL.revokeObjectURL(url); // CLEANUP
-      canvas.remove(); // CLEANUP
+      URL.revokeObjectURL(url);
+      canvas.remove();
     });
   };
 
   /* ======================================================
-     EXPORT MANIFEST (Unity + Godot)
+     EXPORT MANIFEST
   ====================================================== */
   const handleExportManifest = () => {
     if (!tiles.length) return;
@@ -249,18 +249,16 @@ ${tiles
 
     zip.generateAsync({ type: "blob" }).then((zipFile) => {
       const url = URL.createObjectURL(zipFile);
-
       const a = document.createElement("a");
       a.href = url;
       a.download = "tileset_manifest.zip";
       a.click();
-
-      URL.revokeObjectURL(url); // CLEANUP
+      URL.revokeObjectURL(url);
     });
   };
 
   /* ======================================================
-     EXPORT FULL ZIP
+     EXPORT ZIP
   ====================================================== */
   const handleExportZIP = async () => {
     if (!imageObj || !tiles.length) return;
@@ -270,14 +268,12 @@ ${tiles
     const canvas = document.createElement("canvas");
     canvas.width = imageObj.width;
     canvas.height = imageObj.height;
-
     const ctx = canvas.getContext("2d");
     ctx.drawImage(imageObj, 0, 0);
 
     const tilesetBlob = await new Promise((resolve) =>
       canvas.toBlob(resolve, "image/png")
     );
-
     zip.file("tileset.png", tilesetBlob);
 
     const json = tiles.map((tile) => ({
@@ -287,7 +283,6 @@ ${tiles
       size: tile.size,
       collision: collisions[tile.id] || "none",
     }));
-
     zip.file("tileset-data.json", JSON.stringify(json, null, 2));
 
     const folder = zip.folder("tiles");
@@ -306,16 +301,9 @@ ${tiles
       a.download = "tileset_export.zip";
       a.click();
 
-      URL.revokeObjectURL(url); // CLEANUP
-      canvas.remove(); // CLEANUP
+      URL.revokeObjectURL(url);
+      canvas.remove();
     });
-  };
-
-  /* ======================================================
-     COLLISION CHANGE
-  ====================================================== */
-  const handleCollisionChange = (tileId, type) => {
-    setCollisions((prev) => ({ ...prev, [tileId]: type }));
   };
 
   /* ======================================================
@@ -324,7 +312,7 @@ ${tiles
   if (showSplash) {
     return (
       <div className="splash-screen">
-        <img src="./assets/logo.png" alt="logo" className="splash-logo" />
+        <img src={logo} alt="logo" className="splash-logo" />
 
         <h1 className="splash-title">PIXENO</h1>
         <p className="splash-subtitle">Tileset Manager</p>
@@ -366,7 +354,7 @@ ${tiles
       <div className="app">
         <header className="app-header">
           <div className="app-logo-title">
-            <img src="./assets/logo.png" alt="logo" className="header-logo" />
+            <img src={logo} alt="logo" className="header-logo" />
             <h1 className="title">Tileset Manager</h1>
           </div>
 
@@ -437,12 +425,12 @@ ${tiles
               collisions={collisions}
             />
 
-            <TileInfoPanel
-              tile={selectedTile || hoveredTile}
-              tileSize={effectiveTileSize}
-              collisions={collisions}
-              onCollisionChange={handleCollisionChange}
-            />
+        <TileInfoPanel
+  tile={selectedTile || hoveredTile}
+  tileSize={effectiveTileSize}
+  collisions={collisions}
+  onCollisionChange={handleCollisionChange}
+/>
           </div>
         )}
       </div>
